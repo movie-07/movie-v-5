@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 // Mock function, replace with real DB query
 const getAllMovies = async () => {
-  const res = await fetch('http://localhost:3000/api/movie'); // or your live API
+  const res = await fetch('https://www.allinoneitservice.shop/api/movie'); // or your live API for test https://www.allinoneitservice.shop/
   const data = await res.json();
   return data.users || [];
 };
@@ -32,7 +32,23 @@ const SingleMoviePage = async ({ params }) => {
         target="_blank"
         className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded"
       >
-        Download ({movie.quality})
+        Download HD 720p({movie.quality1}) 
+      </a>
+      <br/>
+      <a
+        href={movie.link}
+        target="_blank"
+        className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Download FULL HD 1080P ({movie.quality2}) 
+      </a>
+      <br/>
+      <a
+        href={movie.link}
+        target="_blank"
+        className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Download 4K 2160P ({movie.quality3}) 
       </a>
 
       {/* Suggested Movies */}

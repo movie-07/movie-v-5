@@ -37,12 +37,12 @@ const MovieRoute = ({ data }) => {
   };
 
   return (
-    <div className="w-8/12 mx-auto mt-8 space-y-4">
+    <div className="">
       {/* Search and Genre Filter */}
       <div className="flex justify-between mb-4">
         <input
           type="text"
-          placeholder="Search by title"
+          placeholder="Search "
           value={searchTerm}
           onChange={handleSearchChange}
           className="px-4 py-2 border rounded-md w-2/5"
@@ -62,22 +62,28 @@ const MovieRoute = ({ data }) => {
           {/* Add more genres here */}
         </select>
       </div>
-
+      <div className='container '>
       {/* Movies */}
       {visibleMovies.length > 0 ? (
         visibleMovies.map((item) => (
-          <div key={item._id} className="p-4 border rounded-xl shadow-md bg-white">
+          
+          <div key={item._id} className="card">
             <Link href={`/movies/${encodeURIComponent(item.title.toLowerCase().replace(/\s+/g, '-'))}`}>
-              <div className="p-4 border rounded-xl shadow-md bg-white cursor-pointer">
-                <p className="text-lg font-semibold">Title: {item.title}</p>
-                <Image src={item.img} width={500} height={300} alt={item.title} />
+              <div className=" ">
+                
+                <Image src={item.img} width={300} height={500} alt={item.title}  className='rounded'/>
+                <p className="text-lg font-semibold ">{item.title}</p>
               </div>
             </Link>
           </div>
+          
         ))
       ) : (
         <p>No movies found</p>
       )}
+      </div>
+
+
 
       {/* Load More Button */}
       {visibleCount < filteredMovies.length && (

@@ -22,7 +22,17 @@ const userSchema = new Schema({
     required: true,
     trim: true,
   },
-  quality: {
+  quality1: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  quality2: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  quality3: {
     type: String,
     // required: true,
     trim: true,
