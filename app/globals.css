@@ -18,7 +18,7 @@
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
-.navbar {
+/* .navbar {
   position: sticky;
   top: 0;
   overflow: hidden;
@@ -69,4 +69,4 @@ body {
   font-size: 13px;
   color: #eee;
   line-height: 1.4;
-}
+} */

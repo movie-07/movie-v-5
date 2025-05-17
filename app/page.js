@@ -1,11 +1,41 @@
-import Home from "@/components/Home"
+// // import Home from "@/components/Home"
+// import MovieRoute from "@/components/MovieRoute"
 
-function Homepage() {
+// function Homepage() {
+//   return (
+//     <div>
+//      <MovieRoute/>
+//     </div>
+//   )
+// }
+
+// export default Homepage
+
+
+
+
+
+import MovieRoute from "@/components/MovieRoute";
+
+const Homepage = async () => {
+  // https://www.allinoneitservice.shop
+  const response = await fetch("https://www.allinoneitservice.shop/api/movie", {
+   
+    cache: "no-store", 
+  });
+
+  if (!response.ok) {
+   
+    throw new Error("Failed to fetch data , soory server down ples try some time later contuct us in talegram");
+  }
+
+  const data = await response.json();
+
   return (
     <div>
-     <Home/>
+      <MovieRoute data={data} />
     </div>
-  )
-}
+  );
+};
 
-export default Homepage
+export default Homepage;

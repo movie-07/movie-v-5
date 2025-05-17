@@ -17,22 +17,57 @@ const userSchema = new Schema({
     required: true,
     trim: true,
   },
+  img1: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  img2: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  img3: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
   link: {
     type: String,
-    required: true,
+    // required: true,
     trim: true,
   },
-  quality1: {
+  tag: {
     type: String,
     // required: true,
     trim: true,
   },
-  quality2: {
+  tag2: {
     type: String,
     // required: true,
     trim: true,
   },
-  quality3: {
+  tag3: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  runtime: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  language: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  date: {
+    type: String,
+    // required: true,
+    trim: true,
+  },
+  rating: {
     type: String,
     // required: true,
     trim: true,
@@ -45,7 +80,7 @@ const userSchema = new Schema({
 });
 
 
-mongoose .models ={}
+// mongoose .models ={}
 // userSchema.pre("save", async function(next){
 
 //    const encrypted = await bcrypt.hash(this.password.toString, 12)
