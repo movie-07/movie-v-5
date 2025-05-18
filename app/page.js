@@ -19,7 +19,7 @@ import MovieRoute from "@/components/MovieRoute";
 
 const Homepage = async () => {
   // https://www.allinoneitservice.shop
-  const response = await fetch("https://www.allinoneitservice.shop/api/movie", {
+  const response = await fetch("https://www.starxmovies.in/api/movie", {
    
     cache: "no-store", 
   });
