@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 // Mock function, replace with real DB query
 const getAllMovies = async () => {
-  const res = await fetch('https://www.starxmovies.in'); //  live API for test https://www.allinoneitservice.shop/
+  const res = await fetch('https://www.allinoneitservice.shop/api/movie'); //  live API for test https://www.allinoneitservice.shop/
   const data = await res.json();
   return data.users || [];
 };

@@ -4,7 +4,7 @@ import MovieRoute from "@/components/MovieRoute";
 
 const Movie = async () => {
   // https://www.allinoneitservice.shop
-  const response = await fetch("https://www.starxmovies.in/", {
+  const response = await fetch("http://localhost:3000/api/movie", {
    
     cache: "no-store", 
   });
