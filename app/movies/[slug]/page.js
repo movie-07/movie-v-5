@@ -1,112 +1,172 @@
 import Image from 'next/image';
+import Script from 'next/script';
 
-// Mock function, replace with real DB query
 const getAllMovies = async () => {
-  const res = await fetch('https://www.allinoneitservice.shop/api/movie'); //  live API for test https://www.allinoneitservice.shop/
+  const res = await fetch('https://www.allinoneitservice.shop/api/movie', {
+    next: { revalidate: 60 },
+  });
   const data = await res.json();
   return data.users || [];
 };
 
-const SingleMoviePage = async ({ params }) => {
-  const slug = decodeURIComponent(params.slug).toLowerCase(); // Ensure lowercase and decoding
+// ✅ SEO metadata
+export async function generateMetadata({ params }) {
+  const slug = params.slug.toLowerCase();
   const movies = await getAllMovies();
+  const movie = movies.find(
+    (m) => m.title.toLowerCase().replace(/\s+/g, '-') === slug
+  );
 
-  // Find the movie based on the slug
-  const movie = movies.find((m) => m.title.toLowerCase().replace(/\s+/g, '-') === slug);
+  if (!movie) {
+    return {
+      title: 'Movie Not Found',
+      description: 'No movie found for the requested page.',
+    };
+  }
 
-  if (!movie) return <div className="text-center mt-10">Movie not found</div>;
+  return {
+    title: `${movie.title} | Download & Watch`,
+    description: movie.dec || `Watch or download ${movie.title}`,
+    openGraph: {
+      title: `${movie.title} | Download & Watch`,
+      description: movie.dec,
+      images: [
+        {
+          url: movie.img,
+          width: 1200,
+          height: 630,
+          alt: movie.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${movie.title} | Download & Watch`,
+      description: movie.dec,
+      images: [movie.img],
+    },
+  };
+}
 
-  // Find related movies based on genre
+const SingleMoviePage = async ({ params }) => {
+  const slug = params.slug.toLowerCase();
+  const movies = await getAllMovies();
+  const movie = movies.find(
+    (m) => m.title.toLowerCase().replace(/\s+/g, '-') === slug
+  );
+
+  if (!movie)
+    return (
+      <div className="text-center mt-10 text-red-500">Movie not found</div>
+    );
+
   const related = movies.filter(
-    (m) => m.genra.toLowerCase() === movie.genra.toLowerCase() && m._id !== movie._id
+    (m) =>
+      m.genra.toLowerCase() === movie.genra.toLowerCase() &&
+      m._id !== movie._id
   );
 
   return (
-    <div className="w-8/12 mx-auto mt-8 space-y-4">
-          <h1 className="text-3xl font-bold ">{movie.title}</h1>
-          <Image src={movie.img} width={600} height={350} alt={movie.title} />
-          <p className="text-gray-600 mt-2">{movie.dec}</p>
-          
-          {/* Additional Images */}
-          <div className="grid gap-4">
-      {/* Main Image */}
-      <div>
+    <div className="w-11/12 lg:w-8/12 mx-auto mt-10 text-gray-800 dark:text-gray-1000">
+
+      {/* JSON-LD Schema for SEO */}
+      <Script id="json-ld" type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Movie",
+          name: movie.title,
+          image: movie.img,
+          description: movie.dec,
+          genre: movie.genra,
+          datePublished: movie.date,
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: movie.rating,
+            bestRating: "10",
+            worstRating: "0",
+            ratingCount: 1,
+          },
+          actor: [
+            movie.tag && { "@type": "Person", name: movie.tag },
+            movie.tag2 && { "@type": "Person", name: movie.tag2 },
+            movie.tag3 && { "@type": "Person", name: movie.tag3 },
+          ].filter(Boolean),
+        })}
+      </Script>
+
+      <h1 className="text-4xl font-bold mb-6 text-center">{movie.title}</h1>
+
+      <div className="rounded-lg overflow-hidden shadow-lg mb-6">
         <Image
-          className="h-auto max-w-full rounded-lg"
           src={movie.img}
+          width={900}
+          height={500}
           alt={movie.title}
-          width={800}
-          height={450}
+          className="w-full h-auto"
         />
       </div>
-      
-      {/* Thumbnail Images */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {movie.img1 && (
+
+      <p className="text-lg mb-8 leading-relaxed">{movie.dec}</p>
+
+      {/* Full-screen screenshots one by one */}
+      {[movie.img1, movie.img2, movie.img3].filter(Boolean).map((img, index) => (
+        <div key={index} className="mb-6">
           <Image
-            className="h-auto max-w-full rounded-lg"
-            src={movie.img1}
-            alt={`${movie.title} image 1`}
-            width={200}
-            height={120}
+            src={img}
+            alt={`${movie.title} screenshot ${index + 1}`}
+            width={1920}
+            height={1080}
+            className="w-full h-auto rounded-lg shadow"
           />
-        )}
-        {movie.img2 && (
-          <Image
-            className="h-auto max-w-full rounded-lg"
-            src={movie.img2}
-            alt={`${movie.title} image 2`}
-            width={200}
-            height={120}
-          />
-        )}
-        {movie.img3 && (
-          <Image
-            className="h-auto max-w-full rounded-lg"
-            src={movie.img3}
-            alt={`${movie.title} image 3`}
-            width={200}
-            height={120}
-          />
-        )}
-        {/* Add more images if available */}
+        </div>
+      ))}
+
+      <div className="space-y-2 mb-10">
+        <p><strong>🎬 Genre:</strong> {movie.genra}</p>
+        <p><strong>⏱️ Runtime:</strong> {movie.runtime}</p>
+        <p><strong>🌍 Language:</strong> {movie.language}</p>
+        <p><strong>📅 Release Date:</strong> {movie.date}</p>
+        <p><strong>⭐ Rating:</strong> {movie.rating}</p>
+        <p><strong>🏷️ Tags:</strong> {[movie.tag, movie.tag2, movie.tag3].filter(Boolean).join(', ')}</p>
       </div>
-    </div>
-    
-          {/* Movie Details */}
-          <div className="mt-4">
-            <p><strong>Genre:</strong> {movie.genra}</p>
-            <p><strong>Runtime:</strong> {movie.runtime}</p>
-            <p><strong>Language:</strong> {movie.language}</p>
-            <p><strong>Release Date:</strong> {movie.date}</p>
-            <p><strong>Rating:</strong> {movie.rating}</p>
-            <h3><strong>Tags:</strong>  {[movie.tag, movie.tag2, movie.tag3].filter(Boolean).join(', ')}</h3>
+
+      <a
+        href={movie.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition"
+      >
+        📥 Download Movie
+      </a>
+
+      {/* Related Movies */}
+      {related.length > 0 && (
+        <div className="mt-14">
+          <h2 className="text-2xl font-semibold mb-4">More like this</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {related.slice(0, 4).map((r) => (
+              <a
+                key={r._id}
+                href={`/movies/${encodeURIComponent(
+                  r.title.toLowerCase().replace(/\s+/g, '-')
+                )}`}
+                className="block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition"
+              >
+                <Image
+                  src={r.img}
+                  width={400}
+                  height={250}
+                  alt={r.title}
+                  className="rounded-t-lg w-full h-auto"
+                />
+                <div className="p-3">
+                  <h3 className="text-lg  text-blue-400 font-medium truncate">{r.title}</h3>
+                </div>
+              </a>
+            ))}
           </div>
-    
-          {/* Download Link */}
-          <a
-            href={movie.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Download
-          </a>
-    
-          {/* Suggested Movies */}
-      <div className="mt-10">
-              <h2 className="text-2xl font-semibold mb-2">More like this</h2>
-              <div className="grid grid-cols-2 gap-4">
-                {related.slice(0, 4).map((r) => (
-                  <a key={r._id} href={`/movies/${encodeURIComponent(r.title.toLowerCase().replace(/\s+/g, '-'))}`}>
-                    <div className="border rounded-md p-2 hover:shadow-lg">
-                      <Image src={r.img} width={300} height={150} alt={r.title} />
-                      <h3 className="mt-1 text-lg font-medium">{r.title}</h3>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
+        </div>
+      )}
     </div>
   );
 };
